@@ -24,14 +24,9 @@ const item2 = new Item({
   name: "how are you",
 });
 const item3 = new Item({
-  name: "this is 3rd obj",
+  name: "<- you can check/uncheck this",
 });
 const defaultItems = [item1, item2, item3];
-
-// Item.insertMany(defaultItems).then(() => {
-//   console.log("data inserted");
-// });
-// }
 
 const workItems = [];
 
@@ -39,6 +34,12 @@ app.get("/", function (req, res) {
   run();
   async function run() {
     let foundItem = await Item.find({});
+    if (foundItem.length === 0) {
+      Item.insertMany(defaultItems).then(() => {
+        console.log("data inserted");
+      });
+      res.redirect("/");
+    }
     console.log(foundItem);
     res.render("list", { listTitle: "Today", newListItems: foundItem });
   }
