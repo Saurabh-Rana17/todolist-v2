@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+var _ = require("lodash");
 
 const app = express();
 
@@ -93,7 +94,8 @@ app.post("/delete", (req, res) => {
 });
 
 app.get("/:cutomListName", (req, res) => {
-  const customListName = req.params.cutomListName;
+  const customListName = _.capitalize(req.params.cutomListName);
+  // const customListName = req.params.cutomListName;
 
   run();
   async function run() {
