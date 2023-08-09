@@ -44,12 +44,9 @@ app.get("/", function (req, res) {
   async function run() {
     let foundItem = await Item.find({});
     if (foundItem.length === 0) {
-      Item.insertMany(defaultItems).then(() => {
-        console.log("data inserted");
-      });
+      Item.insertMany(defaultItems).then(() => {});
       res.redirect("/");
     }
-    console.log(foundItem);
     res.render("list", { listTitle: "Today", newListItems: foundItem });
   }
 });
@@ -80,17 +77,13 @@ app.post("/delete", (req, res) => {
   const listName = req.body.listName;
 
   if (listName === "Today") {
-    Item.deleteOne({ _id: checkedItemId }).then(() => {
-      console.log("item deleted");
-    });
+    Item.deleteOne({ _id: checkedItemId }).then(() => {});
     res.redirect("/");
   } else {
     List.findOneAndUpdate(
       { name: listName },
       { $pull: { items: { _id: checkedItemId } } }
-    ).then((val) => {
-      console.log("deleted item form custom list");
-    });
+    ).then((val) => {});
     res.redirect("/" + listName);
   }
 });
