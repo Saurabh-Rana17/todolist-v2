@@ -70,11 +70,25 @@ app.post("/delete", (req, res) => {
 
 app.get("/:cutomListName", (req, res) => {
   const customListName = req.params.cutomListName;
-  const list = new List({
-    name: customListName,
-    items: defaultItems,
-  });
-  list.save();
+
+  run();
+  async function run() {
+    await List.findOne({ name: customListName }).then((foundList) => {
+      if (!foundList) {
+        const list = new List({
+          name: customListName,
+          items: defaultItems,
+        });
+        list.save();
+        res.redirect("/" + customListName);
+      } else {
+        res.render("list", {
+          listTitle: foundList.name,
+          newListItems: foundList.items,
+        });
+      }
+    });
+  }
 });
 
 app.get("/about", function (req, res) {
