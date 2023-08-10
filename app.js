@@ -1,5 +1,5 @@
 //jshint esversion:6
-
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -11,9 +11,21 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
-mongoose.connect(
-  "mongodb+srv://saurabhrana200317:PdmMzUEaRO3xu5e2@cluster0.eox6mh0.mongodb.net/todolistDB"
-);
+main().catch((err) => console.log(err));
+
+async function main() {
+  await mongoose
+    .connect(
+      "mongodb+srv://saurabhrana200317:" +
+        process.env.pswd +
+        "@cluster0.eox6mh0.mongodb.net/test?retryWrites=true&w=majority"
+    )
+    .then(() => {
+      console.log("connected");
+    });
+
+  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
+}
 
 // async function main() {
 const itemsSchema = {
@@ -44,9 +56,12 @@ app.get("/", function (req, res) {
   async function run() {
     let foundItem = await Item.find({});
     if (foundItem.length === 0) {
-      Item.insertMany(defaultItems).then(() => {});
+      Item.insertMany(defaultItems).then(() => {
+        console.log("data inserted");
+      });
       res.redirect("/");
     }
+    console.log(foundItem);
     res.render("list", { listTitle: "Today", newListItems: foundItem });
   }
 });
@@ -77,13 +92,17 @@ app.post("/delete", (req, res) => {
   const listName = req.body.listName;
 
   if (listName === "Today") {
-    Item.deleteOne({ _id: checkedItemId }).then(() => {});
+    Item.deleteOne({ _id: checkedItemId }).then(() => {
+      console.log("item deleted");
+    });
     res.redirect("/");
   } else {
     List.findOneAndUpdate(
       { name: listName },
       { $pull: { items: { _id: checkedItemId } } }
-    ).then((val) => {});
+    ).then((val) => {
+      console.log("deleted item form custom list");
+    });
     res.redirect("/" + listName);
   }
 });
