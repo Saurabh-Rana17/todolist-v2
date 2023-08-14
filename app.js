@@ -1,4 +1,6 @@
 //jshint esversion:6
+require("dotenv").config();
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -15,7 +17,9 @@ main().catch((err) => console.log(err));
 async function main() {
   await mongoose
     .connect(
-      "mongodb+srv://saurabhrana200317:PdmMzUEaRO3xu5e2@cluster0.eox6mh0.mongodb.net/test?retryWrites=true&w=majority"
+      "mongodb+srv://saurabhrana200317:" +
+        process.env.mkey +
+        "@cluster0.eox6mh0.mongodb.net/test?retryWrites=true&w=majority"
     )
     .then(() => {
       console.log("connected");
@@ -58,7 +62,7 @@ app.get("/", function (req, res) {
       });
       res.redirect("/");
     }
-    console.log(foundItem);
+
     res.render("list", { listTitle: "Today", newListItems: foundItem });
   }
 });
